@@ -197,14 +197,26 @@
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Récupère le slug depuis l'URL ou par défaut
+  // Récupère le slug : 1) ?slug=, 2) mapping sous-domaine, 3) path URL, 4) défaut
   function getSlug() {
     const urlParams = new URLSearchParams(window.location.search);
     const slugParam = urlParams.get('slug');
     if (slugParam) return slugParam;
-    // Fallback sur le sous-domaine ou path
+
+    // Mapping sous-domaine -> slug page
+    const host = window.location.hostname;
+    const subdomainMap = {
+      'formation.somatica.fr': 'transe-formation',
+      'decouverte.somatica.fr': 'reposer-systeme-nerveux',
+      'studio.somatica.fr': 'liste-attente-iss',
+    };
+    if (subdomainMap[host]) return subdomainMap[host];
+
+    // Fallback sur le path URL
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
     if (path) return path;
+
+    // Défaut absolu
     return 'reposer-systeme-nerveux';
   }
 
