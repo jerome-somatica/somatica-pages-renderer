@@ -224,7 +224,7 @@
                 <input class="form-input" type="text" name="prenom" placeholder="${esc(p.placeholder_prenom || 'Ton prénom')}" required>
                 <input class="form-input" type="email" name="email" placeholder="${esc(p.placeholder_email || 'Ton email')}" required>
               </div>
-              <button type="submit" class="form-cta">${esc(p.cta_texte || 'S''inscrire')}</button>
+              <button type="submit" class="form-cta">${esc(p.cta_texte || "S'inscrire")}</button>
             </form>
             ${p.rgpd ? `<p class="form-rgpd">${esc(p.rgpd)}</p>` : ''}
           </div>
