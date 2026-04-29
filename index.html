@@ -319,11 +319,37 @@
       const titreL1 = p.titre_ligne1 || '';
       const titreH = p.titre_highlight ? `<span class="highlight">${esc(p.titre_highlight)}</span>` : '';
       const titreL2 = p.titre_ligne2 || '';
-      // Overlay adaptatif selon le thème (bordeaux pour féminin, vert pour pro)
+      // Construction du fond Hero en couches superposées (top → bottom dans cet ordre CSS)
+      // Priorité au champ overlay_image_url si fourni (PNG transparent custom)
+      // Sinon dégradé CSS adaptatif au thème
       const isF = document.body.classList.contains('theme-feminin');
-      const overlayTop = isF ? 'rgba(58, 26, 38, 0.72)' : 'rgba(15, 47, 58, 0.78)';
-      const overlayBot = isF ? 'rgba(93, 40, 55, 0.85)' : 'rgba(28, 42, 48, 0.85)';
-      const bgStyle = p.image_url ? `style="background-image: linear-gradient(${overlayTop}, ${overlayBot}), url('${esc(p.image_url)}'); background-size: cover; background-position: center;"` : '';
+      const bgLayers = [];
+
+      // Couche 1 (top) : overlay PNG custom si fourni dans les props
+      if (p.overlay_image_url) {
+        bgLayers.push(`url('${esc(p.overlay_image_url)}')`);
+      } else {
+        // Dégradé CSS de fallback selon le thème
+        if (isF) {
+          bgLayers.push('radial-gradient(ellipse at 50% 18%, rgba(196,149,108,0.22) 0%, transparent 60%)');
+          bgLayers.push('linear-gradient(180deg, rgba(58,26,38,0.45) 0%, rgba(122,56,72,0.35) 30%, rgba(93,40,55,0.65) 65%, rgba(58,26,38,0.92) 100%)');
+        } else {
+          bgLayers.push('radial-gradient(ellipse at 50% 20%, rgba(138,109,46,0.18) 0%, transparent 60%)');
+          bgLayers.push('linear-gradient(180deg, rgba(15,47,58,0.55) 0%, rgba(28,42,48,0.45) 30%, rgba(15,47,58,0.7) 65%, rgba(15,47,58,0.92) 100%)');
+        }
+      }
+
+      // Couche 2 (bot) : image de fond
+      if (p.image_url) {
+        bgLayers.push(`url('${esc(p.image_url)}')`);
+      }
+
+      // Tailles : overlay full cover, image cover. Position : center pour les 2.
+      // background-blend-mode optionnel via prop
+      const blendMode = p.overlay_blend_mode || 'normal';
+      const bgStyle = bgLayers.length > 0
+        ? `style="background-image: ${bgLayers.join(', ')}; background-size: cover; background-position: center; background-blend-mode: ${esc(blendMode)};"`
+        : '';
       return `
       <section class="hero ${p.image_url ? 'hero-with-image' : ''}" ${bgStyle}>
         <div class="hero-inner">
