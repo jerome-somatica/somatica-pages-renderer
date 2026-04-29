@@ -68,6 +68,8 @@
   .temoignage-bloc { border-left: 3px solid var(--dore-fonce); padding: 1.5rem 0 1.5rem 1.5rem; margin: 0 auto; max-width: 600px; text-align: left; }
   .temoignage-texte { font-size: 1.15rem; color: var(--vert-sombre); font-style: italic; line-height: 1.7; margin-bottom: 1rem; }
   .temoignage-auteur { color: var(--dore-fonce); font-weight: 700; font-size: 0.9rem; letter-spacing: 0.02em; }
+  .temoignage-video { max-width: 600px; margin: 0 auto 2rem; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 24px rgba(15, 47, 58, 0.12); }
+  .temoignage-video video { width: 100%; height: auto; display: block; background: var(--vert-sombre); }
 
   /* À propos */
   .a-propos { background: white; text-align: center; }
@@ -191,9 +193,17 @@
       </section>`;
     },
     temoignage(p) {
+      const videoHtml = p.video_url ? `
+        <div class="temoignage-video">
+          <video controls preload="metadata" playsinline poster="${esc(p.poster_url || '')}">
+            <source src="${esc(p.video_url)}" type="video/mp4">
+            Ton navigateur ne supporte pas la lecture vidéo.
+          </video>
+        </div>` : '';
       return `
       <section class="temoignage">
         <div class="container">
+          ${videoHtml}
           <div class="temoignage-bloc">
             ${p.texte ? `<p class="temoignage-texte">${esc(p.texte)}</p>` : ''}
             ${p.auteur ? `<p class="temoignage-auteur">— ${esc(p.auteur)}</p>` : ''}
