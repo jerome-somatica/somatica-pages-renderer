@@ -103,8 +103,68 @@
 
   /* Texte bloc */
   .texte-section { background: var(--fond-creme); }
-  .texte-section h2 { font-size: 1.8rem; color: var(--vert-sombre); margin-bottom: 1.5rem; }
+  .texte-section h2 { font-size: 1.8rem; color: var(--vert-sombre); margin-bottom: 1.5rem; text-align: center; }
   .texte-section p { color: var(--gris); margin-bottom: 1rem; }
+  .texte-section .container { text-align: center; }
+
+  /* Sections génériques */
+  .container-large { max-width: 1080px; margin: 0 auto; }
+  .section-titre { font-size: 1.8rem; color: var(--vert-sombre); text-align: center; margin-bottom: 0.8rem; font-weight: 700; }
+  .section-intro { text-align: center; color: var(--gris); margin-bottom: 3rem; font-size: 1.05rem; max-width: 640px; margin-left: auto; margin-right: auto; }
+
+  /* Programme */
+  .programme-section { background: var(--fond-creme); }
+  .programme-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 720px) { .programme-grid { grid-template-columns: repeat(2, 1fr); } }
+  .programme-etape { background: white; padding: 2rem 1.8rem; border-radius: 6px; border-top: 3px solid var(--dore-fonce); }
+  .programme-num { font-size: 0.85rem; letter-spacing: 0.15em; color: var(--dore-fonce); font-weight: 700; margin-bottom: 0.6rem; }
+  .programme-etape h3 { font-size: 1.4rem; color: var(--vert-sombre); margin-bottom: 0.4rem; line-height: 1.3; }
+  .programme-sous-titre { color: var(--gris); font-style: italic; font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .programme-bloc { margin-top: 1rem; }
+  .programme-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dore-fonce); font-weight: 700; margin-bottom: 0.4rem; }
+  .programme-bloc p { font-size: 0.95rem; color: var(--texte); line-height: 1.6; }
+  .programme-bloc ul { list-style: none; padding-left: 0; }
+  .programme-bloc li { font-size: 0.95rem; color: var(--texte); padding: 0.3rem 0 0.3rem 1.2rem; position: relative; line-height: 1.5; }
+  .programme-bloc li::before { content: "▸"; position: absolute; left: 0; color: var(--dore-fonce); font-weight: 700; }
+  .programme-resultat { padding-top: 1rem; border-top: 1px solid var(--bordure, #e0d8c8); margin-top: 1.2rem; }
+
+  /* Tarif */
+  .tarif-section { background: var(--vert-sombre); color: var(--dore-clair); padding: 5rem 1.5rem; }
+  .tarif-section .section-titre { color: var(--dore-clair); }
+  .tarif-section .section-intro { color: rgba(235, 211, 160, 0.75); }
+  .tarif-card { background: rgba(245, 239, 226, 0.06); border: 1px solid rgba(235, 211, 160, 0.18); border-radius: 8px; padding: 2.5rem 2rem; max-width: 640px; margin: 0 auto; }
+  .tarif-section-titre { font-size: 0.85rem; letter-spacing: 0.12em; color: var(--dore-fonce); font-weight: 700; margin-bottom: 1.2rem; text-transform: uppercase; }
+  .tarif-liste { list-style: none; padding: 0; margin-bottom: 1.5rem; }
+  .tarif-liste li { display: flex; justify-content: space-between; padding: 0.7rem 0; border-bottom: 1px solid rgba(235, 211, 160, 0.1); font-size: 0.95rem; gap: 1rem; }
+  .tarif-liste li:last-child { border-bottom: none; }
+  .tarif-item-label { color: rgba(235, 211, 160, 0.9); }
+  .tarif-item-valeur { color: var(--dore-fonce); font-weight: 700; flex-shrink: 0; }
+  .tarif-valeur-totale { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-top: 2px dashed var(--dore-fonce); margin-bottom: 1.5rem; }
+  .tarif-valeur-totale span { font-size: 0.85rem; letter-spacing: 0.05em; color: rgba(235, 211, 160, 0.7); }
+  .tarif-valeur-totale strong { font-size: 1.4rem; color: var(--dore-clair); }
+  .tarif-prix-bloc { text-align: center; padding: 1.5rem 0; }
+  .tarif-prix-normal { font-size: 1rem; color: rgba(235, 211, 160, 0.5); text-decoration: line-through; margin-bottom: 0.4rem; }
+  .tarif-prix { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+  .tarif-prix-amount { font-size: 2.5rem; font-weight: 700; color: var(--dore-fonce); line-height: 1; }
+  .tarif-prix-label { font-size: 0.85rem; color: rgba(235, 211, 160, 0.7); letter-spacing: 0.05em; }
+  .tarif-modalites { font-size: 0.85rem; color: rgba(235, 211, 160, 0.6); margin-top: 0.8rem; font-style: italic; }
+  .tarif-option { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(245, 239, 226, 0.04); border-radius: 4px; margin: 1.5rem 0; font-size: 0.92rem; gap: 1rem; }
+  .tarif-option span { color: rgba(235, 211, 160, 0.85); }
+  .tarif-option strong { color: var(--dore-fonce); flex-shrink: 0; }
+  .tarif-cta { display: block; text-align: center; background: var(--dore-fonce); color: var(--vert-sombre); padding: 1.1rem 2rem; border-radius: 4px; text-decoration: none; font-weight: 700; font-size: 1.05rem; transition: background 0.2s, transform 0.2s; }
+  .tarif-cta:hover { background: var(--dore-clair); transform: translateY(-1px); }
+
+  /* FAQ */
+  .faq-section { background: var(--fond-creme); padding: 5rem 1.5rem; }
+  .faq-cat { margin-bottom: 2.5rem; }
+  .faq-cat:last-child { margin-bottom: 0; }
+  .faq-cat-titre { font-size: 0.85rem; letter-spacing: 0.15em; color: var(--dore-fonce); font-weight: 700; text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--dore-fonce); }
+  .faq-item { background: white; border-radius: 4px; margin-bottom: 0.7rem; padding: 0; overflow: hidden; }
+  .faq-item summary { padding: 1.2rem 1.5rem; cursor: pointer; font-weight: 700; color: var(--vert-sombre); font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after { content: "+"; color: var(--dore-fonce); font-size: 1.5rem; font-weight: 400; flex-shrink: 0; transition: transform 0.2s; }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item p { padding: 0 1.5rem 1.4rem; color: var(--gris); line-height: 1.7; font-size: 0.95rem; margin: 0; }
 
   /* Loading */
   .loader { display: flex; align-items: center; justify-content: center; min-height: 100vh; color: var(--gris); font-style: italic; }
@@ -267,6 +327,76 @@
         <div class="container">
           ${p.titre ? `<h2>${esc(p.titre)}</h2>` : ''}
           ${paragraphes}
+        </div>
+      </section>`;
+    },
+
+    programme(p) {
+      const etapes = (p.etapes || []).map(e => `
+        <div class="programme-etape">
+          ${e.numero ? `<div class="programme-num">${esc(e.numero)}</div>` : ''}
+          ${e.titre ? `<h3>${esc(e.titre)}</h3>` : ''}
+          ${e.sous_titre ? `<p class="programme-sous-titre">${esc(e.sous_titre)}</p>` : ''}
+          ${e.objectif ? `<div class="programme-bloc"><div class="programme-label">Objectif</div><p>${esc(e.objectif)}</p></div>` : ''}
+          ${e.au_programme ? `
+            <div class="programme-bloc">
+              <div class="programme-label">Au programme</div>
+              <ul>${e.au_programme.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+            </div>` : ''}
+          ${e.resultat ? `<div class="programme-bloc programme-resultat"><div class="programme-label">Résultat</div><p>${esc(e.resultat)}</p></div>` : ''}
+        </div>`).join('');
+      return `
+      <section class="programme-section">
+        <div class="container container-large">
+          ${p.titre ? `<h2 class="section-titre">${esc(p.titre)}</h2>` : ''}
+          ${p.intro ? `<p class="section-intro">${esc(p.intro)}</p>` : ''}
+          <div class="programme-grid">${etapes}</div>
+        </div>
+      </section>`;
+    },
+
+    tarifs(p) {
+      const inclus = (p.inclus || []).map(i => `
+        <li>
+          <span class="tarif-item-label">${esc(i.label || i)}</span>
+          ${i.valeur ? `<span class="tarif-item-valeur">${esc(i.valeur)}</span>` : ''}
+        </li>`).join('');
+      return `
+      <section class="tarif-section">
+        <div class="container">
+          ${p.titre ? `<h2 class="section-titre">${esc(p.titre)}</h2>` : ''}
+          ${p.sous_titre ? `<p class="section-intro">${esc(p.sous_titre)}</p>` : ''}
+          <div class="tarif-card">
+            ${p.inclus_titre ? `<div class="tarif-section-titre">${esc(p.inclus_titre)}</div>` : ''}
+            <ul class="tarif-liste">${inclus}</ul>
+            ${p.valeur_totale ? `<div class="tarif-valeur-totale"><span>Valeur totale</span><strong>${esc(p.valeur_totale)}</strong></div>` : ''}
+            <div class="tarif-prix-bloc">
+              ${p.prix_normal ? `<div class="tarif-prix-normal">${esc(p.prix_normal)}</div>` : ''}
+              ${p.prix_early ? `<div class="tarif-prix"><span class="tarif-prix-amount">${esc(p.prix_early)}</span>${p.early_label ? `<span class="tarif-prix-label">${esc(p.early_label)}</span>` : ''}</div>` : ''}
+              ${p.modalites ? `<p class="tarif-modalites">${esc(p.modalites)}</p>` : ''}
+            </div>
+            ${p.option_titre ? `<div class="tarif-option"><span>${esc(p.option_titre)}</span><strong>${esc(p.option_prix || '')}</strong></div>` : ''}
+            ${p.cta_texte ? `<a href="${esc(p.cta_lien || '#')}" class="tarif-cta" target="_blank" rel="noopener">${esc(p.cta_texte)}</a>` : ''}
+          </div>
+        </div>
+      </section>`;
+    },
+
+    faq(p) {
+      const cats = (p.categories || []).map(cat => `
+        <div class="faq-cat">
+          ${cat.label ? `<h3 class="faq-cat-titre">${esc(cat.label)}</h3>` : ''}
+          ${(cat.questions || []).map(qa => `
+            <details class="faq-item">
+              <summary>${esc(qa.q)}</summary>
+              <p>${esc(qa.r)}</p>
+            </details>`).join('')}
+        </div>`).join('');
+      return `
+      <section class="faq-section">
+        <div class="container">
+          ${p.titre ? `<h2 class="section-titre">${esc(p.titre)}</h2>` : ''}
+          ${cats}
         </div>
       </section>`;
     }
