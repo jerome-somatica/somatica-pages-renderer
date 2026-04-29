@@ -6,7 +6,11 @@
 <meta name="theme-color" content="#1c2a30" id="meta-theme">
 <title>Somatica</title>
 <meta name="description" content="" id="meta-desc">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 <style>
+  /* THEME PAR DÉFAUT : pro Jérôme (vert sombre + doré chaud) — utilisé pour ISS et autres */
   :root {
     --dore-fonce: #8a6d2e;
     --dore-clair: #ebd3a0;
@@ -15,15 +19,96 @@
     --fond-creme: #f5efe2;
     --texte: #1a1a1a;
     --gris: #4a4a4a;
+    --font-titre: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-corps: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-italic: 'Inter', sans-serif;
+    --radius: 6px;
+    --radius-card: 8px;
+    --shadow: 0 8px 24px rgba(15, 47, 58, 0.12);
+    --highlight-style: italic;
+  }
+
+  /* THEME FÉMININ SOMATICA : bordeaux + rose poudré + doré chaud + serif élégante */
+  /* Appliqué automatiquement aux pages tunnel = seances ou formation */
+  body.theme-feminin {
+    --dore-fonce: #c4956c;        /* Doré chaud rose */
+    --dore-clair: #ead4c8;        /* Rose poudré clair */
+    --vert-sombre: #3a1a26;       /* Bordeaux profond (remplace vert) */
+    --fond-sombre: #5d2837;       /* Bordeaux Somatica (rouge du logo) */
+    --fond-creme: #faf2e8;        /* Crème rosée */
+    --texte: #3a1a26;             /* Bordeaux profond pour le texte */
+    --gris: #7a5a55;              /* Gris chaud rosé */
+    --font-titre: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+    --font-corps: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-italic: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    --radius: 8px;
+    --radius-card: 12px;
+    --shadow: 0 12px 36px rgba(93, 40, 55, 0.15);
+  }
+
+  /* Application des fontes selon thème */
+  body.theme-feminin h1,
+  body.theme-feminin h2,
+  body.theme-feminin h3 {
+    font-family: var(--font-titre);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  body.theme-feminin .hero h1 .highlight {
+    font-family: var(--font-italic);
+    font-style: italic;
+    font-weight: 500;
+  }
+  body.theme-feminin .hero-sub,
+  body.theme-feminin .section-intro,
+  body.theme-feminin .beneficies-intro,
+  body.theme-feminin .pour-qui-intro {
+    font-family: var(--font-italic);
+    font-style: italic;
+  }
+  body.theme-feminin .hero-label,
+  body.theme-feminin .programme-num,
+  body.theme-feminin .benefice-num,
+  body.theme-feminin .programme-label,
+  body.theme-feminin .gardefous-titre,
+  body.theme-feminin .faq-cat-titre,
+  body.theme-feminin .tarif-section-titre {
+    font-family: var(--font-corps);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+  }
+  body.theme-feminin .temoignage-texte {
+    font-family: var(--font-italic);
+    font-style: italic;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--font-corps);
     background: var(--fond-creme);
     color: var(--texte);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+  }
+  /* Border-radius et shadow pilotés par variables thème */
+  .benefice, .programme-etape, .a-propos-image, .texte-image, .gardefous-bloc,
+  .tarif-card, .temoignage-video, .faq-item {
+    border-radius: var(--radius-card);
+  }
+  body.theme-feminin .hero-cta,
+  body.theme-feminin .form-cta,
+  body.theme-feminin .tarif-cta {
+    border-radius: 999px;  /* Boutons arrondis style premium */
+    padding-left: 2.4rem;
+    padding-right: 2.4rem;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  body.theme-feminin .hero::before {
+    background: radial-gradient(ellipse at top, rgba(196, 149, 108, 0.25), transparent 70%);
+  }
+  body.theme-feminin .hero-with-image {
+    /* Overlay plus chaud (bordeaux) au lieu du vert */
   }
 
   /* HERO */
@@ -234,7 +319,11 @@
       const titreL1 = p.titre_ligne1 || '';
       const titreH = p.titre_highlight ? `<span class="highlight">${esc(p.titre_highlight)}</span>` : '';
       const titreL2 = p.titre_ligne2 || '';
-      const bgStyle = p.image_url ? `style="background-image: linear-gradient(rgba(15, 47, 58, 0.78), rgba(28, 42, 48, 0.85)), url('${esc(p.image_url)}'); background-size: cover; background-position: center;"` : '';
+      // Overlay adaptatif selon le thème (bordeaux pour féminin, vert pour pro)
+      const isF = document.body.classList.contains('theme-feminin');
+      const overlayTop = isF ? 'rgba(58, 26, 38, 0.72)' : 'rgba(15, 47, 58, 0.78)';
+      const overlayBot = isF ? 'rgba(93, 40, 55, 0.85)' : 'rgba(28, 42, 48, 0.85)';
+      const bgStyle = p.image_url ? `style="background-image: linear-gradient(${overlayTop}, ${overlayBot}), url('${esc(p.image_url)}'); background-size: cover; background-position: center;"` : '';
       return `
       <section class="hero ${p.image_url ? 'hero-with-image' : ''}" ${bgStyle}>
         <div class="hero-inner">
@@ -456,6 +545,17 @@
     document.title = page.meta_title || page.titre || 'Somatica';
     if (page.meta_description) document.getElementById('meta-desc').content = page.meta_description;
     if (page.theme_color) document.getElementById('meta-theme').content = page.theme_color;
+
+    // Choix automatique du thème selon le tunnel
+    // - tunnel = seances ou formation → thème féminin Somatica (bordeaux/rose/doré)
+    // - tunnel = logiciel ou liste_attente → thème pro Jérôme (vert/doré)
+    if (page.tunnel === 'seances' || page.tunnel === 'formation') {
+      document.body.classList.add('theme-feminin');
+      document.getElementById('meta-theme').content = '#5d2837';
+    } else {
+      document.body.classList.remove('theme-feminin');
+      document.getElementById('meta-theme').content = page.theme_color || '#1c2a30';
+    }
 
     // Récupère les blocs visibles, triés par ordre
     const { data: blocks, error: blocksErr } = await supabase
