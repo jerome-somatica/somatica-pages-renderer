@@ -90,6 +90,68 @@
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
+
+  /* ===== ANIMATIONS FADE-IN AU SCROLL ===== */
+  .fade-in-section {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s cubic-bezier(0.215, 0.61, 0.355, 1), transform 0.9s cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  .fade-in-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Le Hero ne fait pas de fade-in (visible au load) */
+  .hero { opacity: 1 !important; transform: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in-section { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ===== STICKY NAV ===== */
+  .sticky-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(28, 42, 48, 0); backdrop-filter: blur(0);
+    transition: background 0.3s, backdrop-filter 0.3s, padding 0.3s;
+    padding: 1.2rem 1.5rem;
+    pointer-events: none;
+  }
+  .sticky-nav.visible { background: rgba(28, 42, 48, 0.92); backdrop-filter: blur(12px); padding: 0.7rem 1.5rem; pointer-events: all; }
+  body.theme-feminin .sticky-nav.visible { background: rgba(58, 26, 38, 0.92); }
+  .sticky-nav-inner { max-width: 1080px; margin: 0 auto; display: flex; gap: 1.5rem; justify-content: center; align-items: center; flex-wrap: wrap; opacity: 0; transition: opacity 0.3s; }
+  .sticky-nav.visible .sticky-nav-inner { opacity: 1; }
+  .sticky-nav a { color: var(--dore-clair); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.05em; font-weight: 500; padding: 0.4rem 0.6rem; transition: color 0.2s; }
+  .sticky-nav a:hover { color: var(--dore-fonce); }
+  .sticky-nav a.cta { background: var(--dore-fonce); color: var(--vert-sombre); padding: 0.5rem 1.1rem; border-radius: 999px; font-weight: 700; }
+  .sticky-nav a.cta:hover { background: var(--dore-clair); color: var(--vert-sombre); }
+  @media (max-width: 720px) { .sticky-nav-inner { gap: 0.8rem; } .sticky-nav a { font-size: 0.75rem; padding: 0.3rem 0.4rem; } .sticky-nav a:not(.cta) { display: none; } }
+
+  /* Smooth scroll natif */
+  html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+
+  /* ===== PROGRESS BAR DE SCROLL EN HAUT ===== */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--dore-fonce), var(--dore-clair));
+    z-index: 200; transition: width 0.1s;
+  }
+
+  /* ===== STATS COUNT (compteurs animés) ===== */
+  .stats-count-section { background: var(--fond-creme); padding: 4rem 1.5rem; }
+  body.theme-feminin .stats-count-section { background: var(--fond-creme); }
+  .stats-count-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 2rem; max-width: 920px; margin: 0 auto; text-align: center; }
+  .stats-count-item .num { font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 700; color: var(--dore-fonce); font-family: var(--font-titre); line-height: 1; margin-bottom: 0.4rem; display: block; }
+  .stats-count-item .label { font-size: 0.85rem; letter-spacing: 0.12em; color: var(--gris); text-transform: uppercase; font-weight: 500; }
+
+  /* ===== GALLERY ===== */
+  .gallery-section { background: var(--fond-creme); padding: 5rem 1.5rem; }
+  body.theme-feminin .gallery-section { background: var(--fond-creme); }
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.8rem; max-width: 1200px; margin: 0 auto; }
+  .gallery-item { aspect-ratio: 1; overflow: hidden; border-radius: var(--radius-card); background: var(--vert-sombre); transition: transform 0.4s ease; cursor: pointer; }
+  .gallery-item:hover { transform: scale(1.03); }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
+  .gallery-item:hover img { transform: scale(1.08); }
+  .gallery-item.feature { grid-column: span 2; grid-row: span 2; aspect-ratio: 1; }
+  @media (max-width: 720px) { .gallery-item.feature { grid-column: span 2; grid-row: auto; } }
   /* Border-radius et shadow pilotés par variables thème */
   .benefice, .programme-etape, .a-propos-image, .texte-image, .gardefous-bloc,
   .tarif-card, .temoignage-video, .faq-item {
@@ -547,6 +609,39 @@
           ${cats}
         </div>
       </section>`;
+    },
+
+    stats_count(p) {
+      const items = (p.items || []).map(it => `
+        <div class="stats-count-item">
+          <span class="num" data-target="${esc(it.number || '0')}">${esc(it.prefix || '')}${esc(it.number || '0')}${esc(it.suffix || '')}</span>
+          <span class="label">${esc(it.label || '')}</span>
+        </div>`).join('');
+      return `
+      <section class="stats-count-section">
+        <div class="container container-large">
+          ${p.titre ? `<h2 class="section-titre">${esc(p.titre)}</h2>` : ''}
+          <div class="stats-count-grid">${items}</div>
+        </div>
+      </section>`;
+    },
+
+    gallery(p) {
+      const items = (p.images || []).map((img, i) => {
+        const isFeature = i === 0 && p.feature_first;
+        return `
+        <div class="gallery-item ${isFeature ? 'feature' : ''}">
+          <img src="${esc(img.url || img)}" alt="${esc(img.alt || '')}" loading="lazy">
+        </div>`;
+      }).join('');
+      return `
+      <section class="gallery-section">
+        <div class="container container-large">
+          ${p.titre ? `<h2 class="section-titre">${esc(p.titre)}</h2>` : ''}
+          ${p.intro ? `<p class="section-intro">${esc(p.intro)}</p>` : ''}
+          <div class="gallery-grid">${items}</div>
+        </div>
+      </section>`;
     }
   };
 
@@ -614,6 +709,107 @@
 
     document.getElementById('page-content').innerHTML = html;
     setupOptinForm();
+    setupAnimations();
+    setupStickyNav(blocks || []);
+    setupScrollProgress();
+    setupCounters();
+  }
+
+  // ============ ANIMATIONS ============
+  function setupAnimations() {
+    const sections = document.querySelectorAll('section');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    sections.forEach(s => {
+      if (!s.classList.contains('hero')) {
+        s.classList.add('fade-in-section');
+        observer.observe(s);
+      }
+    });
+  }
+
+  // ============ STICKY NAV ============
+  function setupStickyNav(blocks) {
+    // Construit la nav selon les types de blocs présents
+    const navItems = [];
+    const sectionMap = { programme: 'Programme', temoignage: 'Témoignages', tarifs: 'Tarif', faq: 'FAQ', cta_optin: 'Réserver' };
+    const seenTypes = new Set();
+    const sections = document.querySelectorAll('section');
+    let i = 0;
+    blocks.forEach(b => {
+      if (sectionMap[b.type_bloc] && !seenTypes.has(b.type_bloc)) {
+        seenTypes.add(b.type_bloc);
+        if (sections[i]) {
+          const id = `nav-${b.type_bloc}`;
+          sections[i].id = id;
+          navItems.push({ id, label: sectionMap[b.type_bloc], cta: b.type_bloc === 'cta_optin' });
+        }
+      }
+      i++;
+    });
+    if (navItems.length === 0) return;
+
+    const nav = document.createElement('nav');
+    nav.className = 'sticky-nav';
+    nav.innerHTML = `<div class="sticky-nav-inner">${navItems.map(n => `<a href="#${n.id}" class="${n.cta ? 'cta' : ''}">${esc(n.label)}</a>`).join('')}</div>`;
+    document.body.appendChild(nav);
+
+    // Show nav after scrolling past hero
+    const showAfter = window.innerHeight * 0.7;
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > showAfter) nav.classList.add('visible');
+      else nav.classList.remove('visible');
+    });
+  }
+
+  // ============ SCROLL PROGRESS BAR ============
+  function setupScrollProgress() {
+    const bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    document.body.appendChild(bar);
+    window.addEventListener('scroll', () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      bar.style.width = `${progress}%`;
+    });
+  }
+
+  // ============ COMPTEURS ANIMÉS ============
+  function setupCounters() {
+    const nums = document.querySelectorAll('.stats-count-item .num');
+    if (!nums.length) return;
+    const animateNum = (el) => {
+      const target = parseInt(String(el.dataset.target || '0').replace(/\D/g, ''), 10);
+      const prefix = (el.textContent.match(/^[^\d]*/) || [''])[0];
+      const suffix = (el.textContent.match(/[^\d]*$/) || [''])[0];
+      if (!target) return;
+      const duration = 1600;
+      const start = performance.now();
+      const tick = (now) => {
+        const elapsed = now - start;
+        const ratio = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - ratio, 3);
+        const current = Math.floor(target * eased);
+        el.textContent = `${prefix}${current.toLocaleString('fr-FR')}${suffix}`;
+        if (ratio < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateNum(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    nums.forEach(n => observer.observe(n));
   }
 
   function setupOptinForm() {
