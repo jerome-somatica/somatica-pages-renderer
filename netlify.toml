@@ -13,6 +13,12 @@
   [headers.values]
     Cache-Control = "public, max-age=300, must-revalidate"
 
+# IMPORTANT, ne PAS rediriger /.well-known/* (Let's Encrypt ACME challenge, security.txt, etc.)
+[[redirects]]
+  from = "/.well-known/*"
+  to = "/.well-known/:splat"
+  status = 200
+
 # Une seule page index.html qui gère tous les chemins via JS
 [[redirects]]
   from = "/*"
