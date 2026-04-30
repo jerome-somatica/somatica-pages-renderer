@@ -344,28 +344,30 @@
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Récupère le slug : 1) ?slug=, 2) mapping sous-domaine, 3) path URL, 4) défaut
+  // Récupère la query qui identifie la page : ?slug=X, ou path /X, ou défaut.
+  // La résolution par sous-domaine se fait via .eq('sous_domaine', ...) en DB (sp_pages.sous_domaine)
   function getSlug() {
     const urlParams = new URLSearchParams(window.location.search);
     const slugParam = urlParams.get('slug');
     if (slugParam) return slugParam;
 
-    // Mapping sous-domaine -> slug page
-    const host = window.location.hostname;
-    const subdomainMap = {
-      'formation.somatica.fr': 'transe-formation',
-      'decouverte.somatica.fr': 'reposer-systeme-nerveux',
-      'studio.somatica.fr': 'liste-attente-iss',
-      'seances.somatica.fr': 'seances',
-    };
-    if (subdomainMap[host]) return subdomainMap[host];
-
-    // Fallback sur le path URL
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
     if (path) return path;
 
-    // Défaut absolu
-    return 'reposer-systeme-nerveux';
+    return null; // null = résoudre par sous-domaine
+  }
+
+  // Extrait le sous-domaine racine (formation, seances, etc.) ou null
+  function getSubdomain() {
+    const host = window.location.hostname;
+    const parts = host.split('.');
+    // Cas : formation.somatica.fr → "formation"
+    // Cas : somatica.fr ou www.somatica.fr → null
+    if (parts.length >= 3 && parts[parts.length - 2] === 'somatica' && parts[parts.length - 1] === 'fr') {
+      const sub = parts[0];
+      if (sub && sub !== 'www') return sub;
+    }
+    return null;
   }
 
   // Échappement HTML basique
@@ -679,18 +681,27 @@
 
   async function loadPage() {
     const slug = getSlug();
+    const subdomain = getSubdomain();
     document.title = 'Chargement... — Somatica';
 
-    // Récupère la page
-    const { data: page, error: pageErr } = await supabase
-      .from('sp_pages')
-      .select('*')
-      .eq('slug', slug)
-      .single();
+    // Résolution de la page :
+    // 1. Si slug explicite (?slug= ou path) → match par slug
+    // 2. Sinon si sous-domaine → match par sous_domaine
+    // 3. Sinon défaut absolu
+    let pageQuery = supabase.from('sp_pages').select('*').eq('statut', 'publiee').limit(1);
+    if (slug) {
+      pageQuery = pageQuery.eq('slug', slug);
+    } else if (subdomain) {
+      pageQuery = pageQuery.eq('sous_domaine', subdomain);
+    } else {
+      pageQuery = pageQuery.eq('slug', 'reposer-systeme-nerveux');
+    }
+    const { data: pages, error: pageErr } = await pageQuery;
+    const page = pages && pages.length ? pages[0] : null;
 
     if (pageErr || !page) {
       document.getElementById('page-content').innerHTML = `<div class="loader">Page introuvable.</div>`;
-      console.error('Erreur page:', pageErr);
+      console.error('Erreur page:', pageErr, 'slug:', slug, 'subdomain:', subdomain);
       return;
     }
 
