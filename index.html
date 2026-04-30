@@ -496,7 +496,7 @@
           <h2>${esc(p.titre_ligne1 || '')}${p.titre_ligne2 ? '<br>' + esc(p.titre_ligne2) : ''}</h2>
           ${p.intro ? `<p>${esc(p.intro)}</p>` : ''}
           <div class="form-bloc">
-            <form id="optin-form" data-tag="${esc(p.tag_brevo || 'lead_magnet')}" novalidate>
+            <form id="optin-form" data-tag="${esc(p.tag_brevo || 'lead_magnet')}" data-redirect="${esc(p.cta_lien || '')}" novalidate>
               <div class="form-row">
                 <input class="form-input" type="text" name="prenom" placeholder="${esc(p.placeholder_prenom || 'Ton prénom')}" required>
                 <input class="form-input" type="email" name="email" placeholder="${esc(p.placeholder_email || 'Ton email')}" required>
@@ -668,15 +668,46 @@
     if (page.meta_description) document.getElementById('meta-desc').content = page.meta_description;
     if (page.theme_color) document.getElementById('meta-theme').content = page.theme_color;
 
-    // Choix automatique du thème selon le tunnel
-    // - tunnel = seances ou formation → thème féminin Somatica (bordeaux/rose/doré)
-    // - tunnel = logiciel ou liste_attente → thème pro Jérôme (vert/doré)
-    if (page.tunnel === 'seances' || page.tunnel === 'formation') {
-      document.body.classList.add('theme-feminin');
-      document.getElementById('meta-theme').content = '#5d2837';
+    // Charge le template assigné à la page (table sp_templates)
+    let template = null;
+    if (page.template_id) {
+      const { data: tpl } = await supabase
+        .from('sp_templates')
+        .select('slug, css_variables, css_custom')
+        .eq('id', page.template_id)
+        .single();
+      template = tpl;
+    }
+
+    // Applique le template : injecte CSS vars + css_custom + class body
+    if (template) {
+      // 1. CSS variables sur :root
+      const cssVars = template.css_variables || {};
+      const varsString = Object.entries(cssVars).map(([k, v]) => `${k}: ${v};`).join(' ');
+      let varsStyle = document.getElementById('tpl-vars');
+      if (!varsStyle) { varsStyle = document.createElement('style'); varsStyle.id = 'tpl-vars'; document.head.appendChild(varsStyle); }
+      varsStyle.textContent = `:root { ${varsString} }`;
+
+      // 2. CSS custom
+      let customStyle = document.getElementById('tpl-custom');
+      if (!customStyle) { customStyle = document.createElement('style'); customStyle.id = 'tpl-custom'; document.head.appendChild(customStyle); }
+      customStyle.textContent = template.css_custom || '';
+
+      // 3. Class body pour le ciblage
+      document.body.className = document.body.className.split(' ').filter(c => !c.startsWith('tpl-') && !c.startsWith('theme-')).join(' ');
+      document.body.classList.add('tpl-' + template.slug);
+
+      // 4. Compat rétro : garder theme-feminin si applicable
+      if (template.slug === 'somatica-feminin') document.body.classList.add('theme-feminin');
     } else {
-      document.body.classList.remove('theme-feminin');
-      document.getElementById('meta-theme').content = page.theme_color || '#1c2a30';
+      // Fallback legacy : choix automatique du thème selon le tunnel
+      if (page.tunnel === 'seances' || page.tunnel === 'formation') {
+        document.body.classList.add('theme-feminin');
+        document.getElementById('meta-theme').content = '#5d2837';
+      } else {
+        document.body.classList.remove('theme-feminin');
+        document.getElementById('meta-theme').content = page.theme_color || '#1c2a30';
+      }
     }
 
     // Récupère les blocs visibles, triés par ordre
@@ -839,7 +870,14 @@
           throw new Error(data.error || 'Erreur ' + res.status);
         }
         // 404 (aucune séquence pour ce tunnel) = non bloquant, on remercie quand même
-        form.innerHTML = '<div style="text-align:center;padding:1.5rem;font-size:1.05rem;color:var(--dore-fonce);">Merci ' + prenom + '. Tu vas recevoir un email dans la minute avec ton accès.</div>';
+        const redirectUrl = form.dataset.redirect;
+        if (redirectUrl && redirectUrl.startsWith('http')) {
+          // Si un lien externe est défini (Calendly, Wix Bookings, etc.), on redirige
+          form.innerHTML = '<div style="text-align:center;padding:1.5rem;font-size:1.05rem;color:var(--dore-fonce);">Merci ' + prenom + '. Redirection vers le calendrier...</div>';
+          setTimeout(() => { window.location.href = redirectUrl; }, 800);
+        } else {
+          form.innerHTML = '<div style="text-align:center;padding:1.5rem;font-size:1.05rem;color:var(--dore-fonce);">Merci ' + prenom + '. Tu vas recevoir un email dans la minute avec ton accès.</div>';
+        }
       } catch (err) {
         if (btn) { btn.disabled = false; btn.textContent = originalLabel; }
         alert('Désolé, une erreur est survenue : ' + (err.message || err) + '. Réessaie ou écris-moi sur WhatsApp.');
