@@ -376,6 +376,37 @@
     })[c]);
   }
 
+  // ====== TEMPLATING DYNAMIQUE pour blocs custom (sp_block_types) ======
+  // Syntaxe : {{ key }} → escape, {{{ key }}} → raw HTML
+  // {{#each items}} ... {{/each}} → boucle (this = item courant, scope props parent accessible)
+  // {{#if key}} ... {{/if}} → si truthy
+  function renderCustomBlock(template, props) {
+    // 1. Boucles {{#each items}} ... {{/each}}
+    let html = template.replace(/\{\{#each\s+(\w+)\s*\}\}([\s\S]*?)\{\{\/each\}\}/g, (_, key, inner) => {
+      const arr = props[key];
+      if (!Array.isArray(arr)) return '';
+      return arr.map(item => {
+        const merged = (typeof item === 'object' && item !== null) ? { ...props, ...item, this: item } : { ...props, this: item };
+        return renderCustomBlock(inner, merged);
+      }).join('');
+    });
+    // 2. Conditionnels {{#if key}} ... {{/if}}
+    html = html.replace(/\{\{#if\s+(\w+)\s*\}\}([\s\S]*?)\{\{\/if\}\}/g, (_, key, inner) => {
+      return props[key] ? renderCustomBlock(inner, props) : '';
+    });
+    // 3. Variables raw {{{ key }}}
+    html = html.replace(/\{\{\{\s*([\w.]+)\s*\}\}\}/g, (_, path) => {
+      const v = path.split('.').reduce((o, k) => (o == null ? '' : o[k]), props);
+      return v == null ? '' : String(v);
+    });
+    // 4. Variables escapées {{ key }}
+    html = html.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, path) => {
+      const v = path.split('.').reduce((o, k) => (o == null ? '' : o[k]), props);
+      return v == null ? '' : esc(String(v));
+    });
+    return html;
+  }
+
   // Renderers par type de bloc
   const renderers = {
     hero(p) {
@@ -724,19 +755,44 @@
       return;
     }
 
+    // Identifier les types personnalisés (pas dans renderers hardcodés JS)
+    const customTypes = (blocks || []).filter(b => !renderers[b.type_bloc]).map(b => b.type_bloc);
+    let customTypesMap = {};
+    if (customTypes.length) {
+      const { data: customDefs } = await supabase
+        .from('sp_block_types')
+        .select('slug, html_template, css_scoped, js_scoped')
+        .in('slug', [...new Set(customTypes)]);
+      (customDefs || []).forEach(d => { customTypesMap[d.slug] = d; });
+      // Injecte le CSS scoped des types custom
+      const cssCustom = (customDefs || []).map(d => d.css_scoped || '').filter(Boolean).join('\n');
+      if (cssCustom) {
+        let style = document.getElementById('block-types-css');
+        if (!style) { style = document.createElement('style'); style.id = 'block-types-css'; document.head.appendChild(style); }
+        style.textContent = cssCustom;
+      }
+    }
+
     // Render les blocs
     const html = (blocks || []).map(b => {
       const renderer = renderers[b.type_bloc];
-      if (!renderer) {
-        console.warn('Renderer inconnu pour type:', b.type_bloc);
-        return '';
+      if (renderer) {
+        // Type hardcodé JS (chemin existant, zéro régression)
+        try { return renderer(b.props || {}); }
+        catch (e) { console.error('Erreur render bloc', b.type_bloc, e); return ''; }
+      }
+      // Type custom : compile le template HTML avec les props
+      const def = customTypesMap[b.type_bloc];
+      if (!def) {
+        console.warn('Type bloc inconnu (ni JS ni DB):', b.type_bloc);
+        return '<section style="padding:1rem;background:#fee;color:#900;">Bloc inconnu : ' + esc(b.type_bloc) + '</section>';
       }
       try {
-        return renderer(b.props || {});
-      } catch (e) {
-        console.error('Erreur render bloc', b.type_bloc, e);
-        return '';
+        const compiled = renderCustomBlock(def.html_template, b.props || {});
+        // Marqueur data-block-id pour permettre au JS scoped de cibler son bloc
+        return `<div data-block-id="${esc(b.id)}" data-block-type="${esc(b.type_bloc)}">${compiled}</div>`;
       }
+      catch (e) { console.error('Erreur render custom', b.type_bloc, e); return ''; }
     }).join('');
 
     document.getElementById('page-content').innerHTML = html;
@@ -745,6 +801,26 @@
     setupStickyNav(blocks || []);
     setupScrollProgress();
     setupCounters();
+
+    // Exécute le JS scoped des blocs custom après injection DOM
+    (blocks || []).forEach(b => {
+      const def = customTypesMap[b.type_bloc];
+      if (!def || !def.js_scoped) return;
+      const blockEl = document.querySelector('[data-block-id="' + b.id + '"]');
+      if (!blockEl) return;
+      try {
+        // Sandbox basique : on expose block (DOM), props (data), et helpers utiles
+        const fn = new Function('block', 'props', 'helpers', def.js_scoped);
+        const helpers = {
+          $: (sel) => blockEl.querySelector(sel),
+          $$: (sel) => Array.from(blockEl.querySelectorAll(sel)),
+          on: (sel, evt, cb) => blockEl.querySelectorAll(sel).forEach(el => el.addEventListener(evt, cb)),
+        };
+        fn(blockEl, b.props || {}, helpers);
+      } catch (e) {
+        console.error('Erreur JS scoped pour bloc', b.type_bloc, e);
+      }
+    });
   }
 
   // ============ ANIMATIONS ============
