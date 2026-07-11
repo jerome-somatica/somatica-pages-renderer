@@ -1071,6 +1071,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           throw new Error(data.error || 'Erreur ' + res.status);
         }
         // 404 (aucune séquence pour ce tunnel) = non bloquant, on remercie quand même
+
+        // Conversion confirmée : on prévient Meta et GA4 (inscription réellement enregistrée)
+        const tunnelTag = tag || 'inconnu';
+        if (typeof window.fbq === 'function') {
+          try {
+            window.fbq('track', 'Lead', {
+              content_name: tunnelTag,
+              content_category: window.location.hostname,
+            });
+          } catch (e) {}
+        }
+        if (typeof window.gtag === 'function') {
+          try { window.gtag('event', 'generate_lead', { tunnel: tunnelTag }); } catch (e) {}
+        }
+
         const redirectUrl = form.dataset.redirect;
         if (redirectUrl && redirectUrl.startsWith('http')) {
           // Si un lien externe est défini (Calendly, Wix Bookings, etc.), on redirige
@@ -1086,6 +1101,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
   }
 
+  // Suivi des clics vers un calendrier de réservation (Calendly, Wix Bookings, resa.somatica.fr).
+  // Écouteur délégué sur document : fonctionne aussi pour les blocs rendus dynamiquement.
+  function setupCtaTracking() {
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest && e.target.closest('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (!/calendly\.com|resa\.somatica\.fr|bookings/i.test(href)) return;
+      const label = (a.innerText || '').trim().slice(0, 60);
+      if (typeof window.fbq === 'function') {
+        try { window.fbq('track', 'Schedule', { content_name: label }); } catch (err) {}
+      }
+      if (typeof window.gtag === 'function') {
+        try { window.gtag('event', 'click_reservation', { link_url: href, link_text: label }); } catch (err) {}
+      }
+    }, true);
+  }
+
+  setupCtaTracking();
   loadPage();
 </script>
 
