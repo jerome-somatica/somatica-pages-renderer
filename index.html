@@ -8,14 +8,71 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-T76NQFHC');</script>
 <!-- End Google Tag Manager -->
+
+<!-- Meta Pixel Code (Somatica) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '27923612037285093');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=27923612037285093&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
+
+<!-- TikTok Pixel (à activer en remplaçant TIKTOK_PIXEL_ID) -->
+<script>
+!function (w, d, t) { w.TiktokAnalyticsObject=t; var ttq=w[t]=w[t]||[]; ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"], ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
+if (window.TIKTOK_PIXEL_ID && window.TIKTOK_PIXEL_ID !== 'TIKTOK_PIXEL_ID') { ttq.load(window.TIKTOK_PIXEL_ID); ttq.page(); }
+}(window, document, 'ttq');
+</script>
+<!-- End TikTok Pixel -->
+
+<!-- Google Analytics 4 (G-9D3N5SZB7N) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9D3N5SZB7N"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-9D3N5SZB7N');</script>
+<!-- End GA4 -->
+
+<!-- UTM persistence (capture early, used by checkout flow) -->
+<script>
+(function(){
+  try {
+    var p = new URLSearchParams(window.location.search);
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){
+      var v = p.get(k);
+      if (v) localStorage.setItem('somatica_' + k, v);
+    });
+    // Premier referrer pour attribution
+    if (!localStorage.getItem('somatica_first_referrer') && document.referrer) {
+      try { localStorage.setItem('somatica_first_referrer', document.referrer); } catch(e){}
+    }
+    if (!localStorage.getItem('somatica_landing_page')) {
+      try { localStorage.setItem('somatica_landing_page', window.location.pathname + window.location.search); } catch(e){}
+    }
+  } catch(e){}
+})();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <meta name="theme-color" content="#1c2a30" id="meta-theme">
 <title>Somatica</title>
 <meta name="description" content="" id="meta-desc">
+<!-- Open Graph + Twitter Card (remplis dynamiquement par loadPage) -->
+<meta property="og:title" content="Somatica" id="meta-og-title">
+<meta property="og:description" content="" id="meta-og-desc">
+<meta property="og:image" content="" id="meta-og-image">
+<meta property="og:type" content="website">
+<meta property="og:url" content="" id="meta-og-url">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Somatica" id="meta-tw-title">
+<meta name="twitter:description" content="" id="meta-tw-desc">
+<meta name="twitter:image" content="" id="meta-tw-image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* THEME PAR DÉFAUT : pro Jérôme (vert sombre + doré chaud) — utilisé pour ISS et autres */
   :root {
@@ -174,7 +231,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     font-weight: 500;
   }
   body.theme-feminin .hero::before {
-    background: radial-gradient(ellipse at top, rgba(196, 149, 108, 0.25), transparent 70%);
+    background: radial-gradient(ellipse at top, var(--hero-glow, rgba(196, 149, 108, 0.25)), transparent 70%);
   }
   body.theme-feminin .hero-with-image {
     /* Overlay plus chaud (bordeaux) au lieu du vert */
@@ -182,7 +239,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   /* HERO */
   .hero { background: var(--fond-sombre); color: var(--dore-clair); padding: 6rem 1.5rem 5rem; text-align: center; position: relative; overflow: hidden; }
-  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top, rgba(138, 109, 46, 0.15), transparent 60%); pointer-events: none; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top, var(--hero-glow, rgba(138, 109, 46, 0.15)), transparent 60%); pointer-events: none; }
   .hero-with-image { padding: 8rem 1.5rem 7rem; min-height: 70vh; display: flex; align-items: center; justify-content: center; }
   .hero-inner { position: relative; max-width: 720px; margin: 0 auto; }
   .hero-label { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--dore-fonce); font-weight: 700; margin-bottom: 1rem; }
@@ -193,6 +250,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .hero-cta { display: inline-block; background: var(--dore-fonce); color: var(--vert-sombre); padding: 1rem 2.2rem; border-radius: 4px; text-decoration: none; font-weight: 700; font-size: 1.05rem; letter-spacing: 0.02em; transition: transform 0.2s, background 0.2s; border: 0; cursor: pointer; }
   .hero-cta:hover, .hero-cta:focus { background: var(--dore-clair); transform: translateY(-1px); }
   .hero-meta { margin-top: 1.5rem; font-size: 0.85rem; color: rgba(235, 211, 160, 0.55); font-style: italic; }
+  .hero-tap { cursor: pointer; }
+  .hero-tap .hero-inner { position: relative; z-index: 2; }
+  .hero-bigplay { position: absolute; top: 33%; left: 50%; transform: translate(-50%, -50%); width: min(94vw, 470px); color: rgba(246,230,200,0.42); pointer-events: none; z-index: 1; filter: drop-shadow(0 2px 14px rgba(0,0,0,0.45)); transition: opacity .6s ease; animation: heroHpPulse 3.2s ease-in-out infinite; }
+  .hero-hp { width: 100%; height: auto; display: block; }
+  .hero.audio-on .hero-bigplay { animation: none; opacity: 0.04; }
+  .hero-tap-cue { font-family: var(--font-italic, 'Cormorant Garamond', Georgia, serif); font-style: italic; font-size: 0.98rem; color: rgba(235,211,160,0.75); letter-spacing: .03em; margin-top: 1rem; }
+  @keyframes heroHpPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; } 50% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; } }
 
   section { padding: 4rem 1.5rem; }
   .container { max-width: 720px; margin: 0 auto; }
@@ -435,6 +499,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       // Couche 1 (top) : overlay PNG custom si fourni dans les props
       if (p.overlay_image_url) {
         bgLayers.push(`url('${esc(p.overlay_image_url)}')`);
+      } else if (p.overlay_color) {
+        // Voile uni réglable par page : couleur "R,G,B" + opacité 0..1
+        const ovOp = (p.overlay_opacity != null && p.overlay_opacity !== '') ? p.overlay_opacity : 0.5;
+        const ovCol = esc(String(p.overlay_color));
+        bgLayers.push(`linear-gradient(rgba(${ovCol},${ovOp}), rgba(${ovCol},${ovOp}))`);
       } else {
         // Dégradé CSS de fallback selon le thème
         if (isF) {
@@ -454,18 +523,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       // Tailles : overlay full cover, image cover. Position : center pour les 2.
       // background-blend-mode optionnel via prop
       const blendMode = p.overlay_blend_mode || 'normal';
+      const glowOverride = p.overlay_color ? '--hero-glow: transparent; ' : '';
       const bgStyle = bgLayers.length > 0
-        ? `style="background-image: ${bgLayers.join(', ')}; background-size: cover; background-position: center; background-blend-mode: ${esc(blendMode)};"`
+        ? `style="${glowOverride}background-image: ${bgLayers.join(', ')}; background-size: cover; background-position: center; background-blend-mode: ${esc(blendMode)};"`
+        : '';
+      const heroClick = p.audio_url
+        ? ` onclick="(function(s){var a=s.querySelector('#hero-audio');if(!a)return;if(a.paused){a.play().catch(function(){});s.classList.add('audio-on');}else{a.pause();s.classList.remove('audio-on');}})(this)"`
         : '';
       return `
-      <section class="hero ${p.image_url ? 'hero-with-image' : ''}" ${bgStyle}>
+      <section class="hero ${p.image_url ? 'hero-with-image' : ''}${p.audio_url ? ' hero-tap' : ''}" ${bgStyle}${heroClick}>
+        ${p.audio_url ? `<audio id="hero-audio" loop preload="none" src="${esc(p.audio_url)}"></audio>
+        <div class="hero-bigplay" aria-hidden="true">
+          <svg class="hero-hp" viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 60V47a54 44 0 0 1 108 0v13" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+            <rect x="6" y="52" width="26" height="44" rx="13" stroke="currentColor" stroke-width="4"/>
+            <rect x="108" y="52" width="26" height="44" rx="13" stroke="currentColor" stroke-width="4"/>
+            <path d="M62 41 L87 54 L62 67 Z" fill="rgba(246,230,200,0.5)" stroke="rgba(246,230,200,0.5)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+          </svg>
+        </div>` : ''}
         <div class="hero-inner">
           ${p.label ? `<div class="hero-label">${esc(p.label)}</div>` : ''}
           <div class="hero-trait"></div>
           <h1>${esc(titreL1)}${titreH ? '<br>' + titreH : ''}${titreL2 ? '<br>' + esc(titreL2) : ''}</h1>
           ${p.sous_titre ? `<p class="hero-sub">${esc(p.sous_titre)}</p>` : ''}
-          ${p.cta_texte ? `<a href="${esc(p.cta_lien || '#')}" class="hero-cta">${esc(p.cta_texte)}</a>` : ''}
+          ${p.audio_url ? `<div class="hero-tap-cue">Au casque, touche l'écran pour entrer dans le son 8D</div>` : ''}
           ${p.meta ? `<p class="hero-meta">${esc(p.meta)}</p>` : ''}
+          ${p.cta_texte ? `<a href="${esc(p.cta_lien || '#')}" class="hero-cta" onclick="event.stopPropagation()">${esc(p.cta_texte)}</a>` : ''}
         </div>
       </section>`;
     },
@@ -720,6 +803,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.title = page.meta_title || page.titre || 'Somatica';
     if (page.meta_description) document.getElementById('meta-desc').content = page.meta_description;
     if (page.theme_color) document.getElementById('meta-theme').content = page.theme_color;
+    // Open Graph + Twitter (pour partages WhatsApp, FB, Twitter, etc.)
+    var ogTitle = page.meta_title || page.titre || 'Somatica';
+    var ogDesc = page.meta_description || '';
+    var ogImage = page.og_image || 'https://pub-bdd518e07d1a4b6d8d21c0ed9e5015ac.r2.dev/iss-design/iss-og-1.png';
+    var ogUrl = window.location.href;
+    var setMeta = function(id, val) { var el = document.getElementById(id); if (el) el.content = val; };
+    setMeta('meta-og-title', ogTitle);
+    setMeta('meta-og-desc', ogDesc);
+    setMeta('meta-og-image', ogImage);
+    setMeta('meta-og-url', ogUrl);
+    setMeta('meta-tw-title', ogTitle);
+    setMeta('meta-tw-desc', ogDesc);
+    setMeta('meta-tw-image', ogImage);
+    // Track ViewISSPage côté Meta + GA4 si page tunnel logiciel
+    if (page.tunnel === 'logiciel' && typeof window.fbq === 'function') {
+      try { window.fbq('trackCustom', 'ViewISSPage', { slug: page.slug, type: page.type_page }); } catch(e){}
+    }
+    if (typeof window.gtag === 'function') {
+      try { window.gtag('event', 'page_view', { page_title: ogTitle, page_location: ogUrl, page_path: window.location.pathname, tunnel: page.tunnel }); } catch(e){}
+    }
 
     // Charge le template assigné à la page (table sp_templates)
     let template = null;
